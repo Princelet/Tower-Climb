@@ -1,24 +1,19 @@
 #include <SFML/Graphics.hpp>
+#include <stdlib.h>
+#include <time.h>
+#include "Game.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    // Initialise the RNG
+    srand(time(NULL));
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+    // Create the game
+    Game gameInstance; // default constructor
 
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
+    // This will not end until the game is over
+    gameInstance.RunGameLoop();
 
+    // If the loop exits, game is over. End the program.
     return 0;
 }
