@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Screen.h"
+#include "AssetManager.h"
 
 class Game;
 
@@ -10,12 +11,10 @@ class LevelScreen :
 public:
     LevelScreen(Game* newGamePointer);
 
-    void Update(sf::Time frameTime) override;
-    void Draw(sf::RenderTarget& target) override;
-
+	void Update(sf::Time frameTime);
+	void Draw(sf::RenderTarget& target);
 
 private:
-    sf::Texture tempTex;
-    sf::Sprite tempSpr;
+	sf::Sprite tempSpr;
 };
 
