@@ -7,7 +7,7 @@
 int main()
 {
     // Initialise the RNG
-    srand(time(NULL));
+    srand(time(nullptr));
 
     // Create the game
     Game gameInstance; // default constructor

@@ -1,6 +1,10 @@
 #pragma once
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include "Screen.h"
+#include "Player.h"
+#include "Platform.h"
+#include "Door.h"
 #include "AssetManager.h"
 
 class Game;
@@ -15,6 +19,8 @@ public:
 	void Draw(sf::RenderTarget& target);
 
 private:
-	sf::Sprite tempSpr;
+	Player player;
+	Door door;
+	Platform platform;
 };
 
