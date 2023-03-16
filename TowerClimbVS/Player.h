@@ -11,7 +11,6 @@ public:
     void UpdateAcceleration();
 
 private:
-    sf::Vector2f position;
     sf::Vector2f oldPosition;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;

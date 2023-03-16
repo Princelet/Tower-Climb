@@ -5,8 +5,5 @@ class Door :
 {
 public:
     Door();
-
-protected:
-    sf::Vector2f position;
 };
 

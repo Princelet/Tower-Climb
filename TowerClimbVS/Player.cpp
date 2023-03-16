@@ -12,19 +12,19 @@ enum class PhysicsType
 
 Player::Player()
 	: SpriteObject()
-	, position(100.0f, 300.0f)
     , oldPosition(100.0f, 300.0f)
 	, velocity()
 	, acceleration(100.0f, 100.0f)
 {
 	sprite.setTexture(AssetManager::RequestTexture("PlayerStand.png"));
-	sprite.setPosition(position);
+    collisionOffset = sf::Vector2f(0, 30.0f);
+    collisionScale = sf::Vector2f(0.5f, 0.5f);
 }
 
 void Player::Update(sf::Time frameTime)
 {
-    const float DRAG = 0.01f;
-    const PhysicsType physics = PhysicsType::VELOCITY_VERLET;
+    const float DRAG = 8.0f;
+    const PhysicsType physics = PhysicsType::FORWARD_EULER;
 
     switch (physics)
     {
@@ -32,11 +32,11 @@ void Player::Update(sf::Time frameTime)
     {
         // EXPLICIT EULER (FORWARD EULER)
 
-        position += velocity * frameTime.asSeconds();
+        SetPosition(GetPosition() + velocity * frameTime.asSeconds());
         velocity += acceleration * frameTime.asSeconds();
 
         // Drag Calculation
-        velocity -= velocity * DRAG;
+        velocity -= velocity * DRAG * frameTime.asSeconds();
 
         // Update Acceleration
         UpdateAcceleration();
@@ -56,7 +56,7 @@ void Player::Update(sf::Time frameTime)
         // Drag Calculation
         velocity -= velocity * DRAG;
 
-        position += velocity * frameTime.asSeconds();
+        SetPosition(GetPosition() + velocity * frameTime.asSeconds());
 
         break;
     }
@@ -70,7 +70,7 @@ void Player::Update(sf::Time frameTime)
         // Drag Calculation
         velocity -= velocity * DRAG;
 
-        position += velocity * frameTime.asSeconds();
+        SetPosition(GetPosition() + velocity * frameTime.asSeconds());
 
         // Update Acceleration
         UpdateAcceleration();
@@ -85,10 +85,10 @@ void Player::Update(sf::Time frameTime)
         // Update Acceleration
         UpdateAcceleration();
 
-        sf::Vector2f lastFramePos = position;
+        sf::Vector2f lastFramePos = GetPosition();
 
         // Current frame's position
-        position = 2.0f*position - oldPosition + acceleration * frameTime.asSeconds() * frameTime.asSeconds();
+        SetPosition(2.0f * GetPosition() - oldPosition + acceleration * frameTime.asSeconds() * frameTime.asSeconds());
 
         // Two frames ago (on next frame)
         oldPosition = lastFramePos;
@@ -103,8 +103,8 @@ void Player::Update(sf::Time frameTime)
         // Get half frame velocity using previous frame's acceleration
         sf::Vector2f halfFrameVel = velocity + acceleration * frameTime.asSeconds() / 2.0f;
 
-        // Get new frame;s position using half frame velocity
-        position += halfFrameVel * frameTime.asSeconds();
+        // Get new frame's position using half frame velocity
+        SetPosition(GetPosition() + halfFrameVel * frameTime.asSeconds());
 
         // Update Acceleration
         UpdateAcceleration();
@@ -121,10 +121,6 @@ void Player::Update(sf::Time frameTime)
     default:
         break;
     }
-
-
-	// Update position to match physics
-	sprite.setPosition(position);
 }
 
 void Player::UpdateAcceleration()
