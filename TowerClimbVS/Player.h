@@ -8,9 +8,11 @@ public:
     Player();
 
     void Update(sf::Time frameTime) override;
-    void UpdateAcceleration();
+    void HandleCollision(SpriteObject other);
 
 private:
+    void UpdateAcceleration();
+
     sf::Vector2f oldPosition;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;

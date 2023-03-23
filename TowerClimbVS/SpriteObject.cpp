@@ -79,6 +79,7 @@ void SpriteObject::SetPosition(sf::Vector2f newPosition)
 	position = newPosition;
 	sprite.setPosition(position);
 }
+
 void SpriteObject::SetPosition(float newX, float newY)
 {
 	SetPosition(sf::Vector2f(newX, newY));
@@ -157,6 +158,28 @@ bool SpriteObject::CheckDifferentCollision(SpriteObject other, bool isCircle)
 	float circleRadius = objectA->GetCircleColliderRadius();
 
 	return squareDistance <= circleRadius * circleRadius;
+}
+
+sf::Vector2f SpriteObject::GetCollisionDepth(SpriteObject other)
+{
+	sf::FloatRect thisAABB = GetAABB();
+	sf::FloatRect otherAABB = other.GetAABB();
+
+	sf::Vector2f thisCentre = GetCollisionCentre();
+	sf::Vector2f otherCentre = other.GetCollisionCentre();
+
+	sf::Vector2f minDistance;
+	minDistance.x = thisAABB.width * 0.5f + otherAABB.width * 0.5f;
+	minDistance.y = thisAABB.height * 0.5f + otherAABB.height * 0.5f;
+
+	sf::Vector2f actualDistance = otherCentre - thisCentre;
+
+	if (actualDistance.x < 0)
+		minDistance.x = -minDistance.x;
+	if (actualDistance.y < 0)
+		minDistance.y = -minDistance.y;
+
+	return actualDistance - minDistance;
 }
 
 sf::Vector2f SpriteObject::GetCollisionCentre()

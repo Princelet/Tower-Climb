@@ -23,6 +23,8 @@ public:
 	bool CheckCollision(SpriteObject other);
 	void SetColliding(bool newColliding);
 	bool CheckDifferentCollision(SpriteObject other, bool isCircle);
+
+	sf::Vector2f GetCollisionDepth(SpriteObject other);
 	
 protected:
 	sf::Sprite sprite;

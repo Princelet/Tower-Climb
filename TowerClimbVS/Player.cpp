@@ -26,6 +26,7 @@ void Player::Update(sf::Time frameTime)
 {
     const float DRAG = 8.0f;
     const PhysicsType physics = PhysicsType::FORWARD_EULER;
+    sf::Vector2f lastFramePos = GetPosition();
 
     switch (physics)
     {
@@ -86,13 +87,8 @@ void Player::Update(sf::Time frameTime)
         // Update Acceleration
         UpdateAcceleration();
 
-        sf::Vector2f lastFramePos = GetPosition();
-
         // Current frame's position
         SetPosition(2.0f * GetPosition() - oldPosition + acceleration * frameTime.asSeconds() * frameTime.asSeconds());
-
-        // Two frames ago (on next frame)
-        oldPosition = lastFramePos;
 
         break;
     }
@@ -122,6 +118,28 @@ void Player::Update(sf::Time frameTime)
     default:
         break;
     }
+
+    // Two frames ago (on next frame)
+    oldPosition = lastFramePos;
+}
+
+void Player::HandleCollision(SpriteObject other)
+{
+    sf::Vector2f depth = GetCollisionDepth(other);
+    sf::Vector2f newPos = GetPosition();
+
+    if (abs(depth.x) < abs(depth.y))
+    {
+        // Move in x direction
+        newPos.x += depth.x;
+    }
+    else
+    {
+        // Move in y direction
+        newPos.y += depth.y;
+    }
+
+    SetPosition(newPos);
 }
 
 void Player::UpdateAcceleration()
