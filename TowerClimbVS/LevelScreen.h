@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Platform.h"
 #include "Door.h"
+#include "MovingPlatform.h"
 #include "AssetManager.h"
 
 class Game;

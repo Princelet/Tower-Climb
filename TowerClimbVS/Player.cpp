@@ -16,7 +16,7 @@ Player::Player()
 	, velocity()
 	, acceleration(100.0f, 100.0f)
 {
-	sprite.setTexture(AssetManager::RequestTexture("PlayerStand.png"));
+	sprite.setTexture(AssetManager::RequestTexture("PlayerStand"));
     collisionOffset = sf::Vector2f(0, 30.0f);
     collisionScale = sf::Vector2f(0.5f, 0.5f);
     collisionType = CollisionType::CIRCLE;
@@ -24,7 +24,7 @@ Player::Player()
 
 void Player::Update(sf::Time frameTime)
 {
-    const float DRAG = 8.0f;
+    const float DRAG = 10.0f;
     const PhysicsType physics = PhysicsType::FORWARD_EULER;
     sf::Vector2f lastFramePos = GetPosition();
 
@@ -38,7 +38,7 @@ void Player::Update(sf::Time frameTime)
         velocity += acceleration * frameTime.asSeconds();
 
         // Drag Calculation
-        velocity -= velocity * DRAG * frameTime.asSeconds();
+        velocity.x -= velocity.x * DRAG * frameTime.asSeconds();
 
         // Update Acceleration
         UpdateAcceleration();
@@ -56,7 +56,7 @@ void Player::Update(sf::Time frameTime)
         velocity += acceleration * frameTime.asSeconds();
 
         // Drag Calculation
-        velocity -= velocity * DRAG;
+        velocity.x -= velocity.x * DRAG;
 
         SetPosition(GetPosition() + velocity * frameTime.asSeconds());
 
@@ -70,7 +70,7 @@ void Player::Update(sf::Time frameTime)
         velocity += acceleration * frameTime.asSeconds();
 
         // Drag Calculation
-        velocity -= velocity * DRAG;
+        velocity.x -= velocity.x * DRAG;
 
         SetPosition(GetPosition() + velocity * frameTime.asSeconds());
 
@@ -110,7 +110,7 @@ void Player::Update(sf::Time frameTime)
         velocity = halfFrameVel + acceleration * frameTime.asSeconds() / 2.0f;
 
         // Drag Calculation
-        velocity -= velocity * DRAG;
+        velocity.x -= velocity.x * DRAG;
 
         break;
     }
@@ -125,6 +125,7 @@ void Player::Update(sf::Time frameTime)
 
 void Player::HandleCollision(SpriteObject other)
 {
+    const float JUMPSPEED = 800;
     sf::Vector2f depth = GetCollisionDepth(other);
     sf::Vector2f newPos = GetPosition();
 
@@ -132,11 +133,21 @@ void Player::HandleCollision(SpriteObject other)
     {
         // Move in x direction
         newPos.x += depth.x;
+        velocity.x = 0;
+        acceleration.x = 0;
     }
     else
     {
         // Move in y direction
         newPos.y += depth.y;
+        velocity.y = 0;
+        acceleration.y = 0;
+
+        // If we collided from above
+        if (depth.y < 0)
+        {
+            velocity.y = -JUMPSPEED;
+        }
     }
 
     SetPosition(newPos);
@@ -144,11 +155,12 @@ void Player::HandleCollision(SpriteObject other)
 
 void Player::UpdateAcceleration()
 {
-    const float ACCEL = 3000.0f;
+    const float ACCEL = 3000;
+    const float GRAVITY = 1000;
 
     // Update acceleration
     acceleration.x = 0;
-    acceleration.y = 0;
+    acceleration.y = GRAVITY;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         acceleration.x = -ACCEL;
@@ -156,13 +168,5 @@ void Player::UpdateAcceleration()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         acceleration.x = ACCEL;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        acceleration.y = -ACCEL;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        acceleration.y = ACCEL;
     }
 }

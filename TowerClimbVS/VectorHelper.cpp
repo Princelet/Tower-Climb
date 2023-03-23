@@ -9,3 +9,13 @@ float VectorHelper::SquareMagnitude(sf::Vector2f vec)
 {
 	return vec.x * vec.x + vec.y * vec.y;
 }
+
+sf::Vector2f VectorHelper::Normalise(sf::Vector2f vec)
+{
+	float mag = SquareMagnitude(vec);
+
+	vec.x /= mag;
+	vec.y /= mag;
+
+	return vec;
+}
