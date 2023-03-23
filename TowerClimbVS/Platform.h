@@ -4,7 +4,7 @@ class Platform :
     public SpriteObject
 {
 public:
-    Platform();
-
+    Platform(sf::Vector2f newPosition);
+    ~Platform();
 };
 

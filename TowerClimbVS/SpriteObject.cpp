@@ -8,6 +8,7 @@ SpriteObject::SpriteObject()
 	, collisionOffset(0.0f, 0.0f)
 	, collisionScale(1.0f, 1.0f)
 	, collisionType(CollisionType::AABB)
+	, alive(true)
 {
 }
 
@@ -21,6 +22,9 @@ void SpriteObject::Update(sf::Time frameTime)
 
 void SpriteObject::Draw(sf::RenderTarget& target)
 {
+	if (!alive)
+		return;
+
 	target.draw(sprite);
 
 	bool drawCollider = true;
@@ -87,6 +91,9 @@ void SpriteObject::SetPosition(float newX, float newY)
 
 bool SpriteObject::CheckCollision(SpriteObject other)
 {
+	if (!alive || !other.alive)
+		return false;
+
 	switch (collisionType)
 	{
 	case CollisionType::CIRCLE:
@@ -180,6 +187,16 @@ sf::Vector2f SpriteObject::GetCollisionDepth(SpriteObject other)
 		minDistance.y = -minDistance.y;
 
 	return actualDistance - minDistance;
+}
+
+void SpriteObject::HandleCollision(SpriteObject& other)
+{
+	// Do Nothing, handled by child
+}
+
+void SpriteObject::SetAlive(bool newAlive)
+{
+	alive = newAlive;
 }
 
 sf::Vector2f SpriteObject::GetCollisionCentre()

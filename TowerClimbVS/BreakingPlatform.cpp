@@ -1,9 +1,13 @@
 #include "BreakingPlatform.h"
+#include "AssetManager.h"
 
-BreakingPlatform::BreakingPlatform()
+BreakingPlatform::BreakingPlatform(sf::Vector2f newPosition)
+	: Platform(newPosition)
 {
+	sprite.setTexture(AssetManager::RequestTexture("BreakingPlatform"));
 }
 
-void BreakingPlatform::Update(sf::Time frameTime)
+void BreakingPlatform::HandleCollision(SpriteObject& other)
 {
+	alive = false;
 }

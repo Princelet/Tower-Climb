@@ -4,7 +4,7 @@ class BreakingPlatform :
     public Platform
 {
 public:
-    BreakingPlatform();
-    void Update(sf::Time frameTime) override;
+    BreakingPlatform(sf::Vector2f newPosition);
+    void HandleCollision(SpriteObject& other) override;
 };
 

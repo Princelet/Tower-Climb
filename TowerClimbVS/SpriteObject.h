@@ -17,7 +17,7 @@ public:
 	virtual void Draw(sf::RenderTarget& target);
 
 	sf::Vector2f GetPosition();
-	void SetPosition(sf::Vector2f newPosition);
+	virtual void SetPosition(sf::Vector2f newPosition);
 	void SetPosition(float newX, float newY);
 
 	bool CheckCollision(SpriteObject other);
@@ -25,6 +25,9 @@ public:
 	bool CheckDifferentCollision(SpriteObject other, bool isCircle);
 
 	sf::Vector2f GetCollisionDepth(SpriteObject other);
+	virtual void HandleCollision(SpriteObject& other);
+
+	void SetAlive(bool newAlive);
 	
 protected:
 	sf::Sprite sprite;
@@ -33,6 +36,8 @@ protected:
 	sf::Vector2f collisionScale;
 
 	CollisionType collisionType;
+
+	bool alive;
 
 private:
 	sf::Vector2f GetCollisionCentre();
