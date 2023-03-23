@@ -5,6 +5,6 @@ Platform::Platform()
 	: SpriteObject()
 {
 	sprite.setTexture(AssetManager::RequestTexture("Platform.png"));
-	collisionOffset = sf::Vector2f(0, -50.0f);
-	collisionScale = sf::Vector2f(0.5f, 0.5f);
+	collisionOffset = sf::Vector2f(0, -55.0f);
+	collisionScale = sf::Vector2f(1.0f, 0.25f);
 }

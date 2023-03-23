@@ -19,6 +19,7 @@ Player::Player()
 	sprite.setTexture(AssetManager::RequestTexture("PlayerStand.png"));
     collisionOffset = sf::Vector2f(0, 30.0f);
     collisionScale = sf::Vector2f(0.5f, 0.5f);
+    collisionType = CollisionType::CIRCLE;
 }
 
 void Player::Update(sf::Time frameTime)

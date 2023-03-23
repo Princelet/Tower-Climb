@@ -23,4 +23,3 @@ private:
 	Door door;
 	Platform platform;
 };
-

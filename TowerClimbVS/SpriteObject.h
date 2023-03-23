@@ -1,6 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+enum class CollisionType
+{
+	CIRCLE,
+	AABB
+};
+
 class SpriteObject
 {
 public:
@@ -16,6 +22,7 @@ public:
 
 	bool CheckCollision(SpriteObject other);
 	void SetColliding(bool newColliding);
+	bool CheckDifferentCollision(SpriteObject other, bool isCircle);
 	
 protected:
 	sf::Sprite sprite;
@@ -23,11 +30,13 @@ protected:
 	sf::Vector2f collisionOffset;
 	sf::Vector2f collisionScale;
 
+	CollisionType collisionType;
+
 private:
 	sf::Vector2f GetCollisionCentre();
 	float GetCircleColliderRadius();
+	sf::FloatRect GetAABB();
 
 	sf::Vector2f position;
 	bool colliding;
 };
-

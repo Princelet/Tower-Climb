@@ -1,11 +1,13 @@
 #include "SpriteObject.h"
 #include "VectorHelper.h"
+#include <algorithm>
 
 SpriteObject::SpriteObject()
  : position(0.0f, 0.0f)
 	, colliding(false)
 	, collisionOffset(0.0f, 0.0f)
 	, collisionScale(1.0f, 1.0f)
+	, collisionType(CollisionType::AABB)
 {
 }
 
@@ -23,27 +25,47 @@ void SpriteObject::Draw(sf::RenderTarget& target)
 
 	bool drawCollider = true;
 
+	// If a collision isn't occurring, the collision circle will be green.
+	sf::Color collisionColor = sf::Color::Green;
+	if (colliding)
+		collisionColor = sf::Color::Red;
+	collisionColor.a = 100;
+
 	if (drawCollider)
 	{
-		sf::CircleShape circle;
+		switch (collisionType)
+		{
+		case CollisionType::CIRCLE:
+			{
+			sf::CircleShape circle;
 
-		sf::Vector2f shapePos = GetCollisionCentre();
-		float circleRadius = GetCircleColliderRadius();;
-		shapePos.x -= circleRadius;
-		shapePos.y-= circleRadius;
+			sf::Vector2f shapePos = GetCollisionCentre();
+			float circleRadius = GetCircleColliderRadius();;
+			shapePos.x -= circleRadius;
+			shapePos.y -= circleRadius;
 
-		circle.setPosition(shapePos);
-		circle.setRadius(circleRadius);
+			circle.setPosition(shapePos);
+			circle.setRadius(circleRadius);
 
-		// If a collision isn't occurring, the collision circle will be green.
-		sf::Color collisionColor = sf::Color::Green;
-		if (colliding)
-			collisionColor = sf::Color::Red;
-		collisionColor.a = 100;
+			circle.setFillColor(collisionColor);
 
-		circle.setFillColor(collisionColor);
+			target.draw(circle);
+			break;
+			}
+		case CollisionType::AABB:
+			{
+			sf::RectangleShape rectangle;
+			sf::FloatRect bounds = GetAABB();
+			rectangle.setPosition(bounds.left, bounds.top);
+			rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
+			rectangle.setFillColor(collisionColor);
 
-		target.draw(circle);
+			target.draw(rectangle);
+			break;
+			}
+		default:
+			break;
+		}
 	}
 }
 
@@ -64,21 +86,77 @@ void SpriteObject::SetPosition(float newX, float newY)
 
 bool SpriteObject::CheckCollision(SpriteObject other)
 {
-	// Get the vector representing displacement between two circles
-	sf::Vector2f displacement = GetCollisionCentre() - other.GetCollisionCentre();
+	switch (collisionType)
+	{
+	case CollisionType::CIRCLE:
+		{
+		if (other.collisionType == CollisionType::CIRCLE)
+		{
+			// Get the vector representing displacement between two circles
+			sf::Vector2f displacement = GetCollisionCentre() - other.GetCollisionCentre();
 
-	// Get vector's magnitude: how far the centres are
-	float squareDistance = VectorHelper::SquareMagnitude(displacement);
+			// Get vector's magnitude: how far the centres are
+			float squareDistance = VectorHelper::SquareMagnitude(displacement);
 
-	// Combine that to the combined radii of the circles
-	float combinedRadii = GetCircleColliderRadius() + other.GetCircleColliderRadius();
+			// Combine that to the combined radii of the circles
+			float combinedRadii = GetCircleColliderRadius() + other.GetCircleColliderRadius();
 
-	return squareDistance <= combinedRadii * combinedRadii;
+			return squareDistance <= combinedRadii * combinedRadii;
+		}
+		else
+			// Use function to check if the collisions are different. Boolean is set to True if the first object is a circle, and False ifit is a rectangle
+			return CheckDifferentCollision(other, true);
+		}
+	case CollisionType::AABB:
+	{
+		if (other.collisionType == CollisionType::AABB)
+			return GetAABB().intersects(other.GetAABB());
+		else
+			return CheckDifferentCollision(other, false);
+	}
+	default:
+		return false;
+	}
 }
 
 void SpriteObject::SetColliding(bool newColliding)
 {
 	colliding = newColliding;
+}
+
+bool SpriteObject::CheckDifferentCollision(SpriteObject other, bool isCircle)
+{
+	// Handles a circle colliding with a rectangle
+
+	SpriteObject* objectA;
+	SpriteObject* objectB;
+
+	if (isCircle)
+	{
+		objectA = this;
+		objectB = &other;
+	}
+	else
+	{
+		objectA = &other;
+		objectB = this;
+	}
+
+	sf::Vector2f nearestPointToCircle = objectA->GetCollisionCentre(); // Actual circle centre to start with
+	sf::FloatRect otherAABB = objectB->GetAABB();
+	// Clamp the circle centre to the AABB of the other object
+	nearestPointToCircle.x = fmaxf(otherAABB.left, fminf(nearestPointToCircle.x, otherAABB.left + otherAABB.width));
+	nearestPointToCircle.y = fmaxf(otherAABB.top, fminf(nearestPointToCircle.y, otherAABB.top + otherAABB.height));
+
+	// Get the vector representing displacement between two circles
+	sf::Vector2f displacement = nearestPointToCircle - objectA->GetCollisionCentre();
+
+	// Get vector's magnitude: how far the centres are
+	float squareDistance = VectorHelper::SquareMagnitude(displacement);
+
+	float circleRadius = objectA->GetCircleColliderRadius();
+
+	return squareDistance <= circleRadius * circleRadius;
 }
 
 sf::Vector2f SpriteObject::GetCollisionCentre()
@@ -102,4 +180,18 @@ float SpriteObject::GetCircleColliderRadius()
 		return bounds.width * 0.5f;
 	else
 		return bounds.height * 0.5f;
+}
+
+sf::FloatRect SpriteObject::GetAABB()
+{
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	bounds.width = bounds.width * collisionScale.x;
+	bounds.height = bounds.height * collisionScale.y;
+
+	sf::Vector2f centre = GetCollisionCentre();
+
+	bounds.left = centre.x - bounds.width * 0.5f;
+	bounds.top = centre.y - bounds.height * 0.5f;
+
+	return bounds;
 }
