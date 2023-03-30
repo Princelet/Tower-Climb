@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Door.h"
 #include "AssetManager.h"
+#include "EndPanel.h"
 
 class Game;
 class Platform;
@@ -18,8 +19,14 @@ public:
 	void Update(sf::Time frameTime);
 	void Draw(sf::RenderTarget& target);
 
+	void TriggerEndState(bool win);
+
 private:
+	void Restart();
+
 	Player player;
 	Door door;
 	std::vector<Platform*> platforms;
+	EndPanel endPanel;
+	bool gameRunning;
 };

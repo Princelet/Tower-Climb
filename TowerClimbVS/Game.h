@@ -13,6 +13,8 @@ public:
     void Update();
     void Draw();
 
+    sf::RenderWindow* GetWindow();
+
 private:
     sf::RenderWindow window;
     sf::Clock gameClock;

@@ -23,6 +23,8 @@
     <ClCompile Include="BreakingPlatform.cpp" />
     <ClCompile Include="DeadlyPlatform.cpp" />
     <ClCompile Include="Door.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="EndPanel.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LevelScreen.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -38,6 +40,8 @@
     <ClInclude Include="BreakingPlatform.h" />
     <ClInclude Include="DeadlyPlatform.h" />
     <ClInclude Include="Door.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="EndPanel.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="LevelScreen.h" />
     <ClInclude Include="MovingPlatform.h" />

@@ -61,4 +61,6 @@ sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string assetName)
 void AssetManager::DestroyAllAssets()
 {
     textures.clear();
+    fonts.clear();
+    soundBuffers.clear();
 }
