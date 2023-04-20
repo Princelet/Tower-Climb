@@ -28,5 +28,8 @@ private:
 	Door door;
 	std::vector<Platform*> platforms;
 	EndPanel endPanel;
+
 	bool gameRunning;
+
+	sf::View camera;
 };

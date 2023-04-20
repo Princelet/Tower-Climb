@@ -13,6 +13,7 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, platforms()
 	, endPanel(newGamePointer->GetWindow(), "YOU WIN", "Press R to Restart\nor Esc to Exit")
 	, gameRunning(true)
+	, camera()
 {
 	Restart();
 }
@@ -46,9 +47,22 @@ void LevelScreen::Update(sf::Time frameTime)
 			door.HandleCollision(player);
 		}
 
+		if (player.GetPosition().x < 0)
+		{
+			player.SetPosition(1, player.GetPosition().y);
+		}
+		/*
+		if (player.GetPosition().x > )
+		{
+			player.SetPosition(1, player.GetPosition().y);
+		}
+		*/
+
 		if (player.GetPosition().y > 2000)
 		{
-			player.SetPosition(500.0f, 500.0f);
+			endPanel.Update(frameTime);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+				Restart();
 		}
 	}
 	else
@@ -61,6 +75,17 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
+	// Update camera based on the render target size and player position
+	camera = target.getDefaultView();
+	sf::Vector2f cameraPos = camera.getCenter();
+	cameraPos.y = player.GetPosition().y + 100;
+	camera.setCenter(cameraPos);
+
+	// Update render target to use camera
+	target.setView(camera);
+
+
+	// Draw "world" objects (use camera)
 	for (size_t i = 0; i < platforms.size(); ++i)
 	{
 		platforms[i]->Draw(target);
@@ -69,6 +94,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	door.Draw(target);
 	player.Draw(target);
 
+
+	// For any UI, reset camera to default view before drawing
+	target.setView(target.getDefaultView());
+
+	// Draw UI objects (use base view)
 	if (!gameRunning)
 	{
 		endPanel.Draw(target);

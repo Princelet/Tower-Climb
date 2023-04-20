@@ -41,7 +41,6 @@ void Game::EventHandling()
 
 void Game::Update()
 {
-
 	sf::Time frameTime = gameClock.restart();
 	
 	// Update current screen
