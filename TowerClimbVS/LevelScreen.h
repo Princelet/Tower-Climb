@@ -21,8 +21,13 @@ public:
 
 	void TriggerEndState(bool win);
 
+	bool LoadNextLevel();
+
 private:
 	void Restart();
+
+	bool LoadLevel(int number);
+	bool LoadLevel(std::string file);
 
 	Player player;
 	Door door;
@@ -32,4 +37,5 @@ private:
 	bool gameRunning;
 
 	sf::View camera;
+	int currentLevel;
 };
